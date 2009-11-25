@@ -1,3 +1,3 @@
-require 'hello_racklet'
+require 'racklet'
 
-run HelloRacklet.new
+run Racklet::Container.parse(File.read('web.xml'))

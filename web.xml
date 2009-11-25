@@ -1,0 +1,21 @@
+<web-app>
+  <racklet>
+    <racklet-name>hello</racklet-name>
+    <racklet-class>HelloRacklet</racklet-class>
+  </racklet>
+
+  <racklet>
+    <racklet-name>param</racklet-name>
+    <racklet-class>ParamRacklet</racklet-class>
+  </racklet>
+
+  <racklet-mapping>
+    <racklet-name>hello</racklet-name>
+    <url-pattern>/hello</url-pattern>
+  </racklet-mapping>
+
+  <racklet-mapping>
+    <racklet-name>param</racklet-name>
+    <url-pattern>/</url-pattern>
+  </racklet-mapping>
+</web-app>

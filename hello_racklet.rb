@@ -1,5 +1,5 @@
 require 'racklet'
-class HelloRacklet < HttpRacklet
+class HelloRacklet < Racklet
   def do_get(request, response)
     response.write "Hello World!"
   end
