@@ -19,16 +19,17 @@ class Racklet
 
   class Container
 
-    attr_accessor :name_to_class_mapping, :name_to_url_mapping, :url_to_class_mapping
+    attr_accessor :url_to_class_mapping
 
     def initialize()
-      @name_to_class_mapping = {}
-      @name_to_url_mapping = {}
       @url_to_class_mapping = {}
     end
 
-    def parse(xml)
+    def configure(xml)
       doc = Nokogiri::XML(xml)
+
+      name_to_url_mapping = {}
+      name_to_class_mapping = {}
 
       doc.css('racklet').each do |racklet|
         name = racklet.css('racklet-name').first.content
@@ -49,12 +50,14 @@ class Racklet
         racklet_class = name_to_class_mapping[name]
         url_to_class_mapping[url] = racklet_class
       end
+
+      self
     end
 
-    def self.parse(xml)
-      container = new
-      container.parse(xml)
-      container
+    def self.configure(xml)
+      returning new do |container|
+        container.configure(xml)
+      end
     end
 
     def call(env)
