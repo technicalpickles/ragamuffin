@@ -2,19 +2,20 @@ require 'rack'
 require 'nokogiri'
 require 'activesupport'
 
-class Racklet
+module Ragamuffin
+  class Racklet
+    def call(env)
+      request = Rack::Request.new(env)
+      response = Rack::Response.new
 
-  def call(env)
-    request = Rack::Request.new(env)
-    response = Rack::Response.new
+      send("do_#{request.request_method.downcase}", request, response)
 
-    send("do_#{request.request_method.downcase}", request, response)
+      response.finish
+    end
 
-    response.finish
-  end
-
-  def self.call(env)
-    new.call(env)
+    def self.call(env)
+      new.call(env)
+    end
   end
 
   class WebApplication
@@ -69,5 +70,5 @@ class Racklet
     end
 
   end
-end
 
+end

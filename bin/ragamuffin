@@ -5,7 +5,7 @@ if $0 == File.join('bin/ragamuffin')
 end
 
 require 'rack'
-require 'racklet'
+require 'ragamuffin'
 
 web_xml_path = ARGV.shift || File.join('WEB-INF', 'web.xml')
 
@@ -17,7 +17,7 @@ app = Rack::Builder.new do
   use Rack::ShowExceptions
   use Rack::Lint
 
-  run Racklet::WebApplication.new web_xml_path
+  run Ragamuffin::WebApplication.new web_xml_path
 end
 
 server.run app, options do |inst|

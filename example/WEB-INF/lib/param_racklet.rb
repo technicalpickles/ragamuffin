@@ -1,4 +1,4 @@
-class ParamRacklet < Racklet
+class ParamRacklet < Ragamuffin::Racklet
   def do_get(request, response)
     data = request.params['data']
     if data

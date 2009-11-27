@@ -45,7 +45,8 @@ All pretty straight forward. What if we could harness this technique in the Ruby
 
 I present to you... racklets! Let's start by making a new ruby file, and putting it in a well known load path: WEB-INF/lib. So, we'll make WEB-INF/lib/example_racklet.rb :
 
-    class ExampleRacklet < Racklet
+    require 'ragamuffin'
+    class ExampleRacklet < Ragamuffin::Racklet
       def do_get(request, response)
         data = request.params['DATA']
         if data
@@ -70,17 +71,23 @@ Next we need a web.xml to tell racklets what to load, and what urls to map it. T
       </racklet-mapping>
     </web-app>
 
-Since we're on rack, you'll want a config.ru to run our racklet container.
+Since we're on rack, you'll want a config.ru to run our ragamuffin web application.
 
-    require 'racklet'
-    run Racklet::Application.new
+    require 'ragamuffin'
+    run Ragamuffin::WebApplication.new
+
 
 This handles loading up the web.xml and updating $LOAD_PATH to include the WEB-INF/lib directory. So now we're in business to something like shotgun to run our server:
 
     $ shotgun 
     == Shotgun starting Rack::Handler::Mongrel on localhost:9393
+
+Alternatively, you can use the included `ragamuffin` script to run it without a config.ru file.
+
+    $ bin/ragamuffin 
+    == Ragamuffin starting Rack::Handler::Mongrel on localhost:9393
     
-Go ahead and browse to http://localhost:9393/example and you'll see:
+Now go ahead and browse to http://localhost:9393/example and you'll see:
 
     No Data
 
