@@ -17,12 +17,16 @@ class Racklet
     new.call(env)
   end
 
-  class Container
+  class WebApplication
 
     attr_accessor :url_to_class_mapping
 
-    def initialize()
+    def initialize(web_xml_path = File.join('WEB-INF', 'web.xml'))
       @url_to_class_mapping = {}
+
+      $LOAD_PATH.unshift File.join(File.dirname(web_xml_path), 'lib')
+
+      configure(File.read(web_xml_path))
     end
 
     def configure(xml)

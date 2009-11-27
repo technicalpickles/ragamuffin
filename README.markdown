@@ -43,7 +43,7 @@ And don't forget to set it up in web.xml:
 
 All pretty straight forward. What if we could harness this technique in the Ruby world? Rack is a minimal framework to make talking to a Ruby webserver nicer, and is pretty flexible and great to build frameworks on top of. Imagine if you would, an API like Java Servlets... but implemented on rack....
 
-I present to you... racklets!
+I present to you... racklets! Let's start by making a new ruby file, and putting it in a well known load path: WEB-INF/lib. So, we'll make WEB-INF/lib/example_racklet.rb :
 
     class ExampleRacklet < Racklet
       def do_get(request, response)
@@ -56,7 +56,7 @@ I present to you... racklets!
       end
     end
 
-And the web.xml should look like this:
+Next we need a web.xml to tell racklets what to load, and what urls to map it. This is kept in WEB-INF/web.xml:
 
     <web-app>
       <racklet>
@@ -73,9 +73,9 @@ And the web.xml should look like this:
 Since we're on rack, you'll want a config.ru to run our racklet container.
 
     require 'racklet'
-    run Racklet::Container.configure(File.read('web.xml'))
+    run Racklet::Application.new
 
-Now we're in business to something like shotgun to run our server:
+This handles loading up the web.xml and updating $LOAD_PATH to include the WEB-INF/lib directory. So now we're in business to something like shotgun to run our server:
 
     $ shotgun 
     == Shotgun starting Rack::Handler::Mongrel on localhost:9393
