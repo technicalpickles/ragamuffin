@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+if $0 == File.join('bin/ragamuffin')
+  $LOAD_PATH.unshift 'lib'
+end
+
+require 'rack'
+require 'racklet'
+
+web_xml_path = ARGV.shift || File.join('WEB-INF', 'web.xml')
+
+server = Rack::Handler::Mongrel
+options = {:Port => 9393, :Host => 'localhost', :AccessLog => []}
+
+app = Rack::Builder.new do
+  use Rack::CommonLogger, STDERR 
+  use Rack::ShowExceptions
+  use Rack::Lint
+
+  run Racklet::WebApplication.new web_xml_path
+end
+
+server.run app, options do |inst|
+  puts "== Ragamuffin starting #{server.to_s} on #{options[:Host]}:#{options[:Port]}"
+end
+
