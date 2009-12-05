@@ -27,7 +27,13 @@ module Ragamuffin
 
       $LOAD_PATH.unshift File.join(File.dirname(web_xml_path), 'lib')
 
-      configure(File.read(web_xml_path))
+      web_xml = if web_xml_path =~ /<web-app>/
+        web_xml_path
+      else
+        File.read(web_xml_path)
+      end
+
+      configure(web_xml)
     end
 
     def configure(xml)
