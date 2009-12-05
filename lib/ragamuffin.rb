@@ -18,6 +18,28 @@ module Ragamuffin
     end
   end
 
+  class DefaultHandler
+    def initialize(app, root)
+      @app = app
+      @root = root
+      @file_server = Rack::Directory.new(@root)
+    end
+
+    def call(env)
+      uri_path = env["PATH_INFO"]
+      filesystem_path = File.join(@root, uri_path)
+
+      can_serve_statically = uri_path != "/" && uri_path !~ /^\/WEB-INF.*/ && File.exist?(path)
+
+      if can_serve_statically
+        @file_server.call(env)
+      else
+        @app.call(env)
+      end
+    end
+
+  end
+
   class ArchivedWebApplication
 
     def initialize(rawr_path, extract_root = '.')
@@ -52,10 +74,16 @@ module Ragamuffin
       else
         web_xml_path = File.join(root, 'WEB-INF', 'web.xml')
         web_xml = File.read(web_xml_path)
-        $LOAD_PATH.unshift File.join(root, 'WEB-INF', 'lib')
+        self.root = root
+
       end
 
+      $LOAD_PATH.unshift File.join(root, 'WEB-INF', 'lib')
+
       configure(web_xml)
+
+      @inner_app = Rack::URLMap.new(@url_to_class_mapping)
+      @inner_app = DefaultHandler.new(@inner_app, root)
     end
 
     def configure(xml)
@@ -94,7 +122,7 @@ module Ragamuffin
     end
 
     def call(env)
-      Rack::URLMap.new(url_to_class_mapping).call(env)
+      @inner_app.call(env)
     end
 
   end
