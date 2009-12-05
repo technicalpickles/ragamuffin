@@ -18,6 +18,27 @@ module Ragamuffin
     end
   end
 
+  class ArchivedWebApplication
+
+    def initialize(rawr_path)
+      require 'zip/zip'
+      Zip::ZipFile::open(rawr_path) do |zip_file|
+        zip_file.each do |zipped_file|
+          extracted_path = zipped_file.name
+          FileUtils.mkdir_p File.dirname(extracted_path)
+          
+          zip_file.extract(zipped_file, extracted_path)
+        end
+      end
+
+      @extracted_web_application = WebApplication.new(File.join('WEB-INF', 'web.xml'))
+    end
+
+    def call(env)
+      @extracted_web_application.call(env)
+    end
+  end
+
   class WebApplication
 
     attr_accessor :url_to_class_mapping

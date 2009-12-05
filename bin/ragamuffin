@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 
-if $0 == File.join('bin/ragamuffin')
-  $LOAD_PATH.unshift 'lib'
-end
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'rack'
 require 'ragamuffin'
 
-web_xml_path = ARGV.shift || File.join('WEB-INF', 'web.xml')
+path = ARGV.shift || File.join('WEB-INF', 'web.xml')
 
 server = Rack::Handler::Mongrel
 options = {:Port => 9393, :Host => 'localhost', :AccessLog => []}
@@ -17,7 +15,11 @@ app = Rack::Builder.new do
   use Rack::ShowExceptions
   use Rack::Lint
 
-  run Ragamuffin::WebApplication.new web_xml_path
+  run case path
+  when /web\.xml$/ then Ragamuffin::WebApplication.new path
+  when /\.rawr$/ then Ragamuffin::ArchivedWebApplication.new path
+  end 
+
 end
 
 server.run app, options do |inst|
